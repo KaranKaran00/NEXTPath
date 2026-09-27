@@ -1,0 +1,8 @@
+.confirm-form { display: inline; margin: 0; }
+.confirm-form .btn { margin: 0; }
+
+.admin-grid .card { margin-bottom: 0; }
+
+@media (max-width: 1000px) {
+    .admin-grid { grid-template-columns: 1fr; }
+}
