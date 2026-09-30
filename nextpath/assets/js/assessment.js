@@ -1,10 +1,3 @@
-/**
- * NEXTPath - Assessment navigation
- * Handles one-question-at-a-time flow, the progress bar,
- * and answer selection styling. Submission itself is a
- * normal form POST to submit_assessment.php.
- */
-
 document.addEventListener('DOMContentLoaded', function () {
     var form = document.getElementById('assessmentForm');
     if (!form) return;
@@ -62,7 +55,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Visual feedback + auto-advance-friendly styling on selection.
     form.querySelectorAll('.option-item').forEach(function (option) {
         var input = option.querySelector('input[type="radio"]');
         input.addEventListener('change', function () {

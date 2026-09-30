@@ -1,12 +1,5 @@
-/**
- * NEXTPath - shared UI interactions
- * Mobile nav toggle, sidebar toggle, password show/hide,
- * and confirmation dialogs for destructive admin actions.
- */
-
 document.addEventListener('DOMContentLoaded', function () {
 
-    /* Public navbar mobile toggle */
     var navToggle = document.getElementById('navToggle');
     var siteNav = document.querySelector('.site-nav');
     if (navToggle && siteNav) {
@@ -16,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    /* Dashboard sidebar toggle (mobile) */
     var sidebarToggle = document.getElementById('sidebarToggle');
     var sidebar = document.getElementById('sidebar');
     if (sidebarToggle && sidebar) {
@@ -32,7 +24,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    /* Password show/hide */
     document.querySelectorAll('.password-toggle').forEach(function (btn) {
         btn.addEventListener('click', function () {
             var targetId = btn.getAttribute('data-target');
@@ -44,7 +35,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    /* Confirmation dialogs before destructive admin actions */
     document.querySelectorAll('.confirm-form').forEach(function (form) {
         form.addEventListener('submit', function (e) {
             var message = form.getAttribute('data-confirm') || 'Are you sure?';
@@ -54,7 +44,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    /* Auto-dismiss flash messages after a few seconds */
     document.querySelectorAll('.flash').forEach(function (flash) {
         setTimeout(function () {
             flash.style.transition = 'opacity 300ms ease';

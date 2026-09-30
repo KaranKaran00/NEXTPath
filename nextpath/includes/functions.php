@@ -11,10 +11,6 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-/* ---------------------------------------------------------
- * Basic helpers
- * ------------------------------------------------------- */
-
 function clean($value) {
     return htmlspecialchars(trim($value ?? ''), ENT_QUOTES, 'UTF-8');
 }
@@ -49,15 +45,8 @@ function current_user_role() {
     return $_SESSION['role'] ?? null;
 }
 
-/**
- * Works out the app's base path automatically from the folder it's
- * actually installed in (e.g. "/nextpath/", "/nextpath3/"), instead of
- * assuming the folder is always literally named "nextpath". This is
- * what makes every base_url() link, redirect and asset path correct
- * no matter what you rename the project folder to.
- */
 if (!defined('APP_BASE_PATH')) {
-    $appRoot = str_replace('\\', '/', dirname(__DIR__)); // parent of includes/
+    $appRoot = str_replace('\\', '/', dirname(__DIR__));
     $docRoot = isset($_SERVER['DOCUMENT_ROOT']) ? rtrim(str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']), '/') : '';
     $relative = ($docRoot !== '' && strpos($appRoot, $docRoot) === 0)
         ? substr($appRoot, strlen($docRoot))
@@ -69,10 +58,6 @@ function base_url($path = '') {
     return APP_BASE_PATH . ltrim($path, '/');
 }
 
-/* ---------------------------------------------------------
- * Password security
- * ------------------------------------------------------- */
-
 function hash_password($plain) {
     return password_hash($plain, PASSWORD_DEFAULT);
 }
@@ -81,22 +66,12 @@ function verify_password($plain, $hash) {
     return password_verify($plain, $hash);
 }
 
-/* ---------------------------------------------------------
- * Settings (e.g. assessment_length) — editable without code changes
- * ------------------------------------------------------- */
-
 function get_setting($pdo, $key, $default = null) {
     $stmt = $pdo->prepare('SELECT setting_value FROM settings WHERE setting_key = ?');
     $stmt->execute([$key]);
     $row = $stmt->fetch();
     return $row ? $row['setting_value'] : $default;
 }
-
-/* ---------------------------------------------------------
- * Assessment: question selection
- * Picks up to $limit questions, shuffled so that categories
- * are interleaved rather than grouped together.
- * ------------------------------------------------------- */
 
 function get_assessment_questions($pdo, $limit) {
     $stmt = $pdo->query('
@@ -107,8 +82,6 @@ function get_assessment_questions($pdo, $limit) {
     ');
     $all = $stmt->fetchAll();
 
-    // Group by category, then round-robin across categories so that
-    // consecutive questions rarely share a category.
     $byCategory = [];
     foreach ($all as $q) {
         $byCategory[$q['category_id']][] = $q;
@@ -139,20 +112,11 @@ function get_assessment_questions($pdo, $limit) {
     return array_slice($mixed, 0, $limit);
 }
 
-/* ---------------------------------------------------------
- * Assessment: scoring
- * ------------------------------------------------------- */
-
-/**
- * Given an assessment_id, computes category-wise scores.
- * Returns an array keyed by category_id:
- *   [category_id => ['name' => ..., 'correct' => n, 'total' => n, 'score' => pct]]
- */
 function get_category_scores($pdo, $assessment_id) {
     $stmt = $pdo->prepare('
         SELECT c.id AS category_id, c.name,
-               SUM(aa.is_correct) AS correct,
-               COUNT(*) AS total
+                SUM(aa.is_correct) AS correct,
+                COUNT(*) AS total
         FROM assessment_answers aa
         JOIN questions q ON q.id = aa.question_id
         JOIN categories c ON c.id = q.category_id
@@ -176,10 +140,6 @@ function get_category_scores($pdo, $assessment_id) {
     return $result;
 }
 
-/**
- * Builds the skill profile (e.g. Analytical Thinking, Communication...)
- * by averaging the scores of every category mapped to that skill.
- */
 function get_skill_profile($pdo, $category_scores) {
     if (empty($category_scores)) {
         return [];
@@ -218,12 +178,6 @@ function skill_level_label($score) {
     return 'Developing';
 }
 
-/* ---------------------------------------------------------
- * Career recommendation algorithm
- * Career Match = Category Score x Career Relevance
- * Centralised here so the formula can evolve in one place.
- * ------------------------------------------------------- */
-
 function get_career_recommendations($pdo, $category_scores, $limit = 6) {
     if (empty($category_scores)) {
         return [];
@@ -257,10 +211,6 @@ function get_career_recommendations($pdo, $category_scores, $limit = 6) {
     return array_slice($recommendations, 0, $limit);
 }
 
-/* ---------------------------------------------------------
- * College / Course Recommendations
- * ------------------------------------------------------- */
-
 function get_courses_for_categories($pdo, $categoryIds) {
     if (empty($categoryIds)) {
         return [];
@@ -271,9 +221,6 @@ function get_courses_for_categories($pdo, $categoryIds) {
         $stmt->execute($categoryIds);
         $rows = $stmt->fetchAll();
     } catch (PDOException $e) {
-        // The courses table may not exist yet on installs that haven't
-        // run database/migration_v2_courses.sql. Degrade gracefully
-        // instead of taking down the whole page.
         error_log('[NEXTPath] courses lookup failed: ' . $e->getMessage());
         return [];
     }
@@ -284,10 +231,6 @@ function get_courses_for_categories($pdo, $categoryIds) {
     }
     return $byCategory;
 }
-
-/* ---------------------------------------------------------
- * Validation helpers (server-side — never trust JS alone)
- * ------------------------------------------------------- */
 
 function validate_registration($data) {
     $errors = [];

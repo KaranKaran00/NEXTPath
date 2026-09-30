@@ -1,10 +1,3 @@
-/**
- * NEXTPath - Career Explorer
- * Client-side search/filter and accordion expand/collapse.
- * The dataset is small (28 categories) so this filters in the
- * browser rather than round-tripping to the server.
- */
-
 document.addEventListener('DOMContentLoaded', function () {
     var searchInput = document.getElementById('explorerSearch');
     var cards = Array.prototype.slice.call(document.querySelectorAll('.explorer-card'));

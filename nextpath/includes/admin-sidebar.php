@@ -1,8 +1,4 @@
 <?php
-/**
- * Admin dashboard sidebar.
- * Expects $active to be set (dashboard|students|questions|categories|careers|courses|assessments|statistics).
- */
 $active = $active ?? '';
 $nav = [
     'dashboard'    => ['label' => 'Dashboard',   'href' => 'dashboard.php',

@@ -1,9 +1,3 @@
-/**
- * NEXTPath - Client-side form validation
- * Mirrors the server-side checks in includes/functions.php so users get
- * instant feedback, but the PHP validation is always the source of truth.
- */
-
 (function () {
 
     function showError(input, message) {

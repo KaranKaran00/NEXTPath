@@ -1,8 +1,4 @@
 <?php
-/**
- * Public site header (landing, login, register, static pages).
- * Expects optional $page_title to be set before include.
- */
 if (!isset($page_title)) {
     $page_title = 'NEXTPath — Discover Your Skills. Find Your Direction.';
 }
